@@ -235,7 +235,6 @@ function Microphone() {
             throw "Cannot compute frequency from null input";
         }
         if (method == 1) {
-            console.log("1");
             return getNoteFromAutocorr();
         }
         else if (method == 2) {
@@ -251,7 +250,6 @@ function Microphone() {
             throw "Cannot compute frequency from null input";
         }
         if (method == 1) {
-            console.log("1");
             return getNoteCentsFromAutocorr();
         }
         else if (method == 2) {
