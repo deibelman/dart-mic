@@ -17,12 +17,23 @@ Description:
 // Constructor/class for Microphone
 // =============================================================================
 
-// This encapsulates all of the functions for working with microphone input
+// The microphone class allows us to define a set of private variables that
+// have global scope within the microphone object's set of functions. We
+// encapsulate a number of internal helper functions as well, but allow 
+// outside access to a function foo with the command: 
+//
+//          this.foo = function(param) { ...
+//
+// This function can then be accessed (after a microphone object "mic" is 
+// initialized) by calling:
+//
+//          mic.foo(param);
+
 function Microphone() {
     var that = this;
     var initialized;
     var context;
-    var inputHardware; // Microphone
+    var inputHardware; // aka, whatever the user has for a microphone
     var timeData;
     var procNode;
     var BUFFER_LEN;
@@ -34,14 +45,16 @@ function Microphone() {
     var SAMPLE_RATE;  
     var FFT_FREQ_RES;
     var processing;
-    var notes; // A look-up table to get notes from frequencies
+    var notes; // A JSON look-up table to get notes from frequencies
 
 // -----------------------------------------------------------------------------
-// initialize function. 
+// initialize function. Properly initializes the parameters of a Microphone 
+// object, defines the frequency-->note lookup table, and calls getUserMedia
+// to request browser-level access to a user's microphone. In general, do not
+// change any part of this initialize function without a compelling reason.
     
-    this.initialize = function() {
-        
-        // Set variables
+    this.initialize = function() {     
+        // Set parameters
         initialized = false;
         context = null;
         inputHardware = null;       // Microphone
@@ -53,8 +66,8 @@ function Microphone() {
         MAX_PEAK_SEARCH = 900;
         fft = null;
         spectrum = null;
-        MY_FFT_SIZE = BUFFER_LEN;   // Don't change MY_FFT_SIZE or SAMPLE_RATE
-        SAMPLE_RATE = 44100;        // unless you have a VERY good reason
+        MY_FFT_SIZE = BUFFER_LEN; 
+        SAMPLE_RATE = 44100;
         FFT_FREQ_RES = (SAMPLE_RATE/2)/(MY_FFT_SIZE/2);
         processing = false;
         notes = {"A0" : 27.5, "A#0" : 29.1352, "B0" : 30.8677, "C1" : 32.7032, 
@@ -100,7 +113,9 @@ function Microphone() {
     }
 
 // -----------------------------------------------------------------------------
-// gotStream function. 
+// gotStream function. This function is the success callback for getUserMedia
+// and initializes the Web Audio API / DSP.JS structures that allow us to
+// manipulate the data streaming in off the microphone.
     
     function gotStream(stream) {
         console.log('gotStream called');
@@ -129,14 +144,18 @@ function Microphone() {
     }
 
 // -----------------------------------------------------------------------------
-// noStream function.
+// noStream function. This function is the failure callback for getUserMedia
+// and alerts the user if their browser doesn't support getUserMedia.
 
     function noStream(e) {
         alert('Error capturing audio.');
     }
 
 // -----------------------------------------------------------------------------
-// startListening function.
+// startListening function. Connects the microphone input to a processing node
+// for future operations. Throws an error if the microphone hasn't been
+// initialized before this function is called -- in other words, if a user
+// tries to get mic data before allowing the browser permission to collect it.
     
     this.startListening = function() {
         if (!initialized) {
@@ -153,7 +172,8 @@ function Microphone() {
     }
 
 // -----------------------------------------------------------------------------
-// stopListening function.
+// stopListening function. Disconnects the microphone input. Can be called or
+// tied to a button to save on processing.
 
     this.stopListening = function() {
         console.log('Done listening');
@@ -170,7 +190,10 @@ function Microphone() {
 // =============================================================================
 
 // -----------------------------------------------------------------------------
-// matchNote function.
+// matchNote function. Input: frequency, in Hertz. Output: closest note 
+// value to that frequency. This function iterates over the JSON lookup table
+// to find the nearest note to the input frequency and returns the note as a
+// string.
 
     function matchNote(freq) {
         var closest = "A0"; // Default closest note
@@ -192,11 +215,12 @@ function Microphone() {
         }
 
         return [closest, closestFreq];
-    }
-    
+    }   
 
 // -----------------------------------------------------------------------------
-// getMaxInputAmplitude function.
+// getMaxInputAmplitude function. Input: none. Output: the amplitude of the
+// microphone signal, expressed in deciBels (scaled from -120). Gives an idea
+// of the volume of the sound picked up by the microphone.
 
     this.getMaxInputAmplitude = function() {
         var minDb = -120;
@@ -328,7 +352,11 @@ function Microphone() {
 // =============================================================================
 
 // -----------------------------------------------------------------------------
-// computeFreqFromFFT function.
+// computeFreqFromFFT function. Input: none. Output: frequency of the sound 
+// picked up by the microphone, computed via FFT. Automatically grabs the 
+// current microphone data from the timeData global variable and uses the FFT
+// defined in DSP.JS. Interpolates the FFT power spectrum to more accurately
+// guess the actual value of the peak frequency of the signal.
 
     function computeFreqFromFFT() {
         fft.forward(timeData);   // See added dsp library for additional info
@@ -350,8 +378,13 @@ function Microphone() {
     }
 
 // -----------------------------------------------------------------------------
-// jainsMethodInterpolate function. Uses neighbouring indices to the index of 
-// greatest magnitude to create a more accurate estimate of the frequency.
+// jainsMethodInterpolate function. Input: array of spectrum power values 
+// returned from FFT; index of bin in spectrum array with max power value.
+// Output: a fractional bin number indicating the interpolated location of
+// the actual signal peak frequency. Uses neighbouring indices to the index of 
+// greatest magnitude to create a more accurate estimate of the frequency. 
+// Simply multiply the returned fractional bin index by the FFT spectrum 
+// frequency resolution to get the estimate of the actual peak frequency.
 
     function jainsMethodInterpolate(spctrm, maxIndex) {
         var m1, m2, m3, n, o;
@@ -397,7 +430,8 @@ function Microphone() {
 
 // -----------------------------------------------------------------------------
 // logData function. Logs time domain data, then frequency domain data for
-// external analysis. Used as a debugging / quantitative analysis tool.
+// external analysis. Used as a debugging / quantitative analysis tool. If 
+// needed, tie it to a button so problems can be logged in real time.
 
     this.logData = function() {
         var t, f;
@@ -448,21 +482,16 @@ function Microphone() {
     }
 }
 
-// =============================================================================
+// ========================================================================== //
 ////////////////////////////////////////////////////////////////////////////////
+// ========================================================================== //
+//                                                                            //
+//                              HERE BE DRAGONS                               //
+//                          PROCEED AT YOUR OWN RISK                          //
+//                                                                            //
+// ========================================================================== //
 ////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-// =============================================================================
+// ========================================================================== //
 
 // DSP Library
 
