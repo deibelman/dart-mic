@@ -55,6 +55,7 @@ function Microphone() {
     var initialized;
     var context;
     var inputHardware; // aka, whatever the user has for a microphone
+    var SAMPLE_RATE;  
     var timeData;
     var procNode;
     var BUFFER_LEN;
@@ -63,7 +64,6 @@ function Microphone() {
     var fft;
     var spectrum;
     var MY_FFT_SIZE; 
-    var SAMPLE_RATE;  
     var FFT_FREQ_RES;
     var processing;
     var notes; // A JSON look-up table to get notes from frequencies
@@ -79,16 +79,16 @@ function Microphone() {
         initialized = false;
         context = null;
         inputHardware = null;       // Microphone
+        SAMPLE_RATE = 44100;
         timeData = null;
-        procNode = null;
-        BUFFER_LEN = 2048;          // Keep a power of 2
-        MIN_SUPPORTED_FREQ = 50;
-        //MAX_PEAK_SEARCH = (SAMPLE_RATE/MIN_SUPPORTED_FREQ); Fix later!!!!!!!!!
-        MAX_PEAK_SEARCH = 900;
+        procNode = null;           
+        BUFFER_LEN = 1024;          // Keep a power of 2, but can change to
+                                    // provide more data, increased resolution
+        MIN_SUPPORTED_FREQ = 60;    
+        MAX_PEAK_SEARCH = (SAMPLE_RATE/MIN_SUPPORTED_FREQ);
         fft = null;
         spectrum = null;
         MY_FFT_SIZE = BUFFER_LEN; 
-        SAMPLE_RATE = 44100;
         FFT_FREQ_RES = (SAMPLE_RATE/2)/(MY_FFT_SIZE/2);
         processing = false;
         notes = {"A0" : 27.5, "A#0" : 29.1352, "B0" : 30.8677, "C1" : 32.7032, 
