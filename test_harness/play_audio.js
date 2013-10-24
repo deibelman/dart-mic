@@ -16,6 +16,13 @@ function loop(song, iter, delay, timesToLoop, mic) {
     			console.log(mic.getNote(1));
     	}, 100);
     }
+    loop(song, i, length, timesToLoop);
+}
+
+function loop(song, iter, delay, timesToLoop) {
+    song.play();
+    var i = iter + 1;
+    console.log('Loop ' + i);
     if (i < timesToLoop) {
         setTimeout( function() {
             loop(song, i, delay, timesToLoop);
