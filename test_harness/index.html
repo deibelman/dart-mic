@@ -7,11 +7,15 @@
     <!link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <script src="microphone.js"></script>
+    <script src="mic_driver.js"></script>
     <script src="play_audio.js"></script>
     <audio id="demo" src="cdefgfedcgegc.mp3"></audio>
     <div>
-      <button onclick="playDemo(2)">Play the Audio</button>
-      <button onclick="document.getElementById('demo').pause()">Pause the Audio</button>
+      <button onclick="mic.startListening()">Listen</button>
+      <button onclick="mic.stopListening()">Stop Listening</button>
+      <button onclick="mic.startRecording()">Record</button>
+      <button onclick="mic.stopRecording()">Stop Recording</button>
     </div>
 </body>
 </html>

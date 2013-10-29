@@ -66,6 +66,10 @@ function Microphone() {
     var MY_FFT_SIZE; 
     var FFT_FREQ_RES;
     var processing;
+    var recording;
+    var recordingLength;
+    var leftChannel;
+    var rightChannel;
     var notes; // A JSON look-up table to get notes from frequencies
 
 // -----------------------------------------------------------------------------
@@ -91,6 +95,10 @@ function Microphone() {
         MY_FFT_SIZE = BUFFER_LEN; 
         FFT_FREQ_RES = (SAMPLE_RATE/2)/(MY_FFT_SIZE/2);
         processing = false;
+        recording = false;
+        recordingLength = 0;
+        leftChannel = [];
+        rightChannel = [];
         notes = {"A0" : 27.5, "A#0" : 29.1352, "B0" : 30.8677, "C1" : 32.7032, 
         	"C#1" : 34.6478, "D1" : 36.7081, "D#1" : 38.8909, "E1" : 41.2034, 
         	"F1" : 43.6535, "F#1" : 46.2493, "G1" : 48.9994, "G#1" : 51.9131, 
@@ -150,9 +158,14 @@ function Microphone() {
 
         // Set up a processing node that will allow us to pass mic input off to
         // the DSP library for frequency domain analysis
-        procNode = context.createJavaScriptNode(MY_FFT_SIZE, 1, 1);
+        procNode = context.createJavaScriptNode(BUFFER_LEN, 1, 1);
         procNode.onaudioprocess = function(e) {
             timeData = e.inputBuffer.getChannelData(0);
+            if (recording) {
+                leftChannel.push (new Float32Array(timeData));
+                rightChannel.push (new Float32Array(timeData));
+                recordingLength += BUFFER_LEN;
+            }
         }
         
         // Create an audio source node from the microphone input to eventually 
@@ -198,11 +211,37 @@ function Microphone() {
 
     this.stopListening = function() {
         console.log('Done listening');
-        if (processing) {
+        if (processing && !recording) {
             processing = false;
 
             // Stop processing audio stream
             inputHardware.disconnect();
+        }
+    }
+    
+// -----------------------------------------------------------------------------
+// startRecording function.
+
+    this.startRecording = function() {
+        if (!initialized || !processing) {
+            throw "Microphone not initialized / not processing"
+        }
+        else {
+            console.log('Now recording');
+            if (!recording) {
+                recording = true;
+            }
+        }
+    }
+
+// -----------------------------------------------------------------------------
+// stopRecording function.
+
+    this.stopRecording = function() {
+        console.log('Done recording');
+        if (recording) {
+            recording = false;
+            writeToWav();
         }
     }
 
@@ -443,6 +482,106 @@ function Microphone() {
         var noteFreq = noteInfo[1];
         var cents = 1200*(Math.log(currFreq/Math.round(noteFreq))/Math.log(2));
         return [noteInfo[0], Math.round(cents)];
+    }
+
+// =============================================================================
+// Recording Functions
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// writeToWav function.
+
+    function writeToWav() {
+        // we flat the left and right channels down
+        var leftBuffer = mergeBuffers (leftChannel, recordingLength);
+        var rightBuffer = mergeBuffers (rightChannel, recordingLength);
+        // we interleave both channels together
+        var interleaved = interleave (leftBuffer, rightBuffer);
+        
+        // we create our wav file
+        var buffer = new ArrayBuffer(44 + interleaved.length * 2);
+        var view = new DataView(buffer);
+        
+        // RIFF chunk descriptor
+        writeUTFBytes(view, 0, 'RIFF');
+        view.setUint32(4, 44 + interleaved.length * 2, true);
+        writeUTFBytes(view, 8, 'WAVE');
+        // FMT sub-chunk
+        writeUTFBytes(view, 12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        // stereo (2 channels)
+        view.setUint16(22, 2, true);
+        view.setUint32(24, SAMPLE_RATE, true);
+        view.setUint32(28, SAMPLE_RATE * 4, true);
+        view.setUint16(32, 4, true);
+        view.setUint16(34, 16, true);
+        // data sub-chunk
+        writeUTFBytes(view, 36, 'data');
+        view.setUint32(40, interleaved.length * 2, true);
+        
+        // write the PCM samples
+        var lng = interleaved.length;
+        var index = 44;
+        var volume = 1;
+        for (var i = 0; i < lng; i++){
+            view.setInt16(index, interleaved[i] * 0x7FFF, true);
+            index += 2;
+        }
+        
+        // our final binary blob
+        var blob = new Blob ( [ view ], { type : 'audio/wav' } );
+        
+        // let's save it locally
+        var url = (window.URL || window.webkitURL).createObjectURL(blob);
+        var link = window.document.createElement('a');
+        link.href = url;
+        link.download = 'recording.wav';
+        var click = document.createEvent("Event");
+        click.initEvent("click", true, true);
+        link.dispatchEvent(click);
+    }
+
+// -----------------------------------------------------------------------------
+// interleave function.
+
+    function interleave(leftChannel, rightChannel) {
+        var length = leftChannel.length + rightChannel.length;
+        var result = new Float32Array(length);
+
+        var inputIndex = 0;
+
+        for (var index = 0; index < length; ){
+        result[index++] = leftChannel[inputIndex];
+        result[index++] = rightChannel[inputIndex];
+        inputIndex++;
+        }
+        return result;
+    }
+
+// -----------------------------------------------------------------------------
+// mergeBuffers function.
+
+    function mergeBuffers(channelBuffer, recordingLength) {
+        var result = new Float32Array(recordingLength);
+        var offset = 0;
+        var lng = channelBuffer.length;
+        for (var i = 0; i < lng; i++){
+            var buffer = channelBuffer[i];
+            result.set(buffer, offset);
+            offset += buffer.length;
+        }
+        return result;
+    }
+
+// -----------------------------------------------------------------------------
+// writeUTFBytes function.
+
+    function writeUTFBytes(view, offset, string) { 
+        var lng = string.length;
+        for (var i = 0; i < lng; i++){
+            view.setUint8(offset + i, string.charCodeAt(i));
+        }
     }
 
 // =============================================================================

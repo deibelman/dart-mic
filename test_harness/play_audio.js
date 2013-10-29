@@ -1,5 +1,5 @@
 function playDemo(timesToLoop) {
-		var mic = new Microphone();
+    var mic = new Microphone();
     var song = document.getElementById('demo');
     var length = Math.round(song.duration*1000) + 1000;
     console.log(length);
@@ -13,7 +13,7 @@ function loop(song, iter, delay, timesToLoop, mic) {
     console.log('Loop ' + i);
     while(!(song.ended)) {
     	setTimeout( function() {
-    			console.log(mic.getNote(1));
+			console.log(mic.getNote(1));
     	}, 100);
     }
     loop(song, i, length, timesToLoop);
