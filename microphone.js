@@ -220,7 +220,8 @@ function Microphone() {
     }
     
 // -----------------------------------------------------------------------------
-// startRecording function.
+// startRecording function. Begins gathering microphone input and storing it in
+// a WAV file.
 
     this.startRecording = function() {
         if (!initialized || !processing) {
@@ -235,7 +236,8 @@ function Microphone() {
     }
 
 // -----------------------------------------------------------------------------
-// stopRecording function.
+// stopRecording function. Stops packaging incoming microphone data into WAV
+// file.
 
     this.stopRecording = function() {
         console.log('Done recording');
@@ -297,7 +299,9 @@ function Microphone() {
     }
 
 // -----------------------------------------------------------------------------
-// getFreq function.
+// getFreq function. Input: the method number (default is 1 to use
+// autocorrelation, 2 to use FFT). Output: the detected frequency calculated via
+// the selected method.
     
     this.getFreq = function(method) {
         if (!processing) {
@@ -312,7 +316,9 @@ function Microphone() {
     }
     
 // -----------------------------------------------------------------------------
-// getNote function.
+// getNote function. Input: the method number (default is 1 to use
+// autocorrelation, 2 to use FFT). Output: the detected note calculated via
+// the selected method.
     
     this.getNote = function(method) {
         if (!processing) {
@@ -327,9 +333,11 @@ function Microphone() {
     }
     
 // -----------------------------------------------------------------------------
-// getNoteCents function.
+// getNoteCents function. Input: the method number (default is 1 to use
+// autocorrelation, 2 to use FFT). Output: the detected note cents offset 
+// calculated via the selected method.
     
-    this.getNoteCents = function() {
+    this.getNoteCents = function(method) {
         if (!processing) {
             throw "Cannot compute frequency from null input";
         }

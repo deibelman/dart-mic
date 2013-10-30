@@ -30,6 +30,8 @@ Microphone Setup:
 		-this.initialize
 		-this.startListening
 		-this.stopListening
+		-this.startRecording
+		-this.stopRecording
 	-Helper functions:
 		-gotStream
 		-noStream
@@ -66,6 +68,7 @@ Testing and Debugging:
 // Function descriptions
 // =============================================================================
 
+--------------------------Microphone setup functions----------------------------
 this.initialize
 // initialize function. Properly initializes the parameters of a Microphone 
 // object, defines the frequency-->note lookup table, and calls getUserMedia
@@ -82,6 +85,24 @@ this.startListening
 //
 // Example: mic.startListening()
 
+this.stopListening
+// stopListening function. Disconnects the microphone input. Can be called or
+// tied to a button to save on processing.
+//
+// Example: mic.stopListening()
+
+this.startRecording
+// startRecording function. Begins gathering microphone input and storing it in
+// a WAV file.
+//
+// Example: mic.startRecording()
+
+this.stopRecording
+// stopRecording function. Stops packaging incoming microphone data into WAV
+// file.
+//
+// Example: mic.stopRecording()
+
 gotStream
 // gotStream function. This function is the success callback for getUserMedia
 // and initializes the Web Audio API / DSP.JS structures that allow us to
@@ -90,3 +111,41 @@ gotStream
 noStream
 // noStream function. This function is the failure callback for getUserMedia
 // and alerts the user if their browser doesn't support getUserMedia.
+
+--------------------------General purpose functions-----------------------------
+this.getMaxInputAmplitude
+// getMaxInputAmplitude function. Input: none. Output: the amplitude of the
+// microphone signal, expressed in deciBels (scaled from -120). Gives an idea
+// of the volume of the sound picked up by the microphone.
+//
+// Example: mic.getMaxInputAmplitude()
+
+this.getFreq
+// getFreq function. Input: the method number (default is 1 to use
+// autocorrelation, 2 to use FFT). Output: the detected frequency calculated via
+// the selected method.
+//
+// Example: mic.getFreq(1) //returns frequency calculated via autocorrelation
+
+this.getNote
+// getNote function. Input: the method number (default is 1 to use
+// autocorrelation, 2 to use FFT). Output: the detected note calculated via
+// the selected method.
+//
+// Example: mic.getNote(1) //returns note calculated via autocorrelation
+
+this.getNoteCents
+// getNoteCents function. Input: the method number (default is 1 to use
+// autocorrelation, 2 to use FFT). Output: the detected note cents offset 
+// calculated via the selected method.
+//
+// Example: mic.getNoteCents(2) //returns note cents offset calculated via FFT
+
+matchNote
+// matchNote function. Input: frequency, in Hertz. Output: closest note 
+// value to that frequency. This function iterates over the JSON lookup table
+// to find the nearest note to the input frequency and returns the note as a
+// string.
+
+--------------------------Autocorrelation functions-----------------------------
+
