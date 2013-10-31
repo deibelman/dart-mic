@@ -473,7 +473,9 @@ function Microphone() {
     }
 
 // -----------------------------------------------------------------------------
-// getNoteFromFFT function.
+// getNoteFromFFT function. Computes the current frequency with 
+// computeFreqFromFFT, then determines the current note by feeding the current
+// frequency to matchNote
 
     function getNoteFromFFT() {
         var currFreq = computeFreqFromFFT();
@@ -482,7 +484,10 @@ function Microphone() {
     }
 
 // -----------------------------------------------------------------------------
-// getNoteCentsFromFFT function.
+// getNoteCentsFromFFT function. Computes the current frequency with 
+// computeFreqFromFFT, then determines the current note by feeding the current
+// frequency to matchNote, and finally computes the cents offset from the 
+// current note
 
     function getNoteCentsFromFFT() {
         var currFreq = computeFreqFromFFT()

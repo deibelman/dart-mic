@@ -58,6 +58,13 @@ FFT:
 		-jainsMethodInterpolate
 		-getNoteFromFFT
 		-getNoteCentsFromFFT
+Recording:
+	-Callable Functions:
+	-Helper functions:
+		-writeToWav
+		-interleave
+		-mergeBuffers
+		-writeUTFBytes
 Testing and Debugging:
 	-Callable Functions:
 		-this.logData
@@ -148,29 +155,77 @@ matchNote
 // string.
 
 --------------------------Autocorrelation functions-----------------------------
+autocorrelate
+// autocorrelate function.
+
+getPeakPeriodicityIndex
+// getPeakPeriodicityIndex function.
+
+computeFreqFromAutocorr
+// computeFreqFromAutocorr function.
+
+getNoteFromAutocorr
+// getNoteFromAutocorr function. Computes the current frequency with 
+// computeFreqFromAutoCorr, then determines the current note by feeding the 
+// current frequency to matchNote.
+
+getNoteCentsFromAutocorr
+// getNoteCentsFromAutocorr function. Computes the current frequency with 
+// computeFreqFromAutocorr, then determines the current note by feeding the 
+// current frequency to matchNote, and finally computes the cents offset from 
+// the current note.
+
+---------------------------------FFT functions----------------------------------
+computeFreqFromFFT
+// computeFreqFromFFT function. Input: none. Output: frequency of the sound 
+// picked up by the microphone, computed via FFT. Automatically grabs the 
+// current microphone data from the timeData global variable and uses the FFT
+// defined in DSP.JS. Interpolates the FFT power spectrum to more accurately
+// guess the actual value of the peak frequency of the signal.
+
+jainsMethodInterpolate
+// jainsMethodInterpolate function. Input: array of spectrum power values 
+// returned from FFT; index of bin in spectrum array with max power value.
+// Output: a fractional bin number indicating the interpolated location of
+// the actual signal peak frequency. Uses neighbouring indices to the index of 
+// greatest magnitude to create a more accurate estimate of the frequency. 
+// Simply multiply the returned fractional bin index by the FFT spectrum 
+// frequency resolution to get the estimate of the actual peak frequency.
+
+getNoteFromFFT
+// getNoteFromFFT function. Computes the current frequency with 
+// computeFreqFromFFT, then determines the current note by feeding the current
+// frequency to matchNote.
+
+getNoteCentsFromFFT
+// getNoteCentsFromFFT function. Computes the current frequency with 
+// computeFreqFromFFT, then determines the current note by feeding the current
+// frequency to matchNote, and finally computes the cents offset from the 
+// current note.
+
+------------------------------Recording functions-------------------------------
+writeToWav
+// writeToWav function.
+
+interleave
+// interleave function.
+
+mergeBuffers
+// mergeBuffers function.
+
+writeUTFBytes
+// writeUTFBytes function.
+
+--------------------------Test and debugging functions--------------------------
+this.logData
+// logData function. Logs time domain data, then frequency domain data for
+// external analysis. Used as a debugging / quantitative analysis tool. If 
+// needed, tie it to a button so problems can be logged in real time.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-=============================License Information================================
+// =============================================================================
+// License information
+// =============================================================================
 This code is released under the MIT Open Source License.
 
 Copyright (c) 2013 Patrick Yukman and Max Deibel
