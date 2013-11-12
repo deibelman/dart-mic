@@ -29,7 +29,7 @@ File: test_driver.js
 
 Authors: Patrick Yukman and Max Deibel
 
-Description: 
+Description: See README for usage.
 
 ============================================================================= */
 

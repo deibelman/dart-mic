@@ -351,7 +351,9 @@ function Microphone() {
 // =============================================================================
 
 // -----------------------------------------------------------------------------
-// autocorrelate function.
+// autocorrelate function. For each index in an array of length BUFFER_LEN,
+// adds the data element at that index and the next index together, then stores
+// it in a separate sums array.
 
     function autocorrelate(data) {
         var sums = new Array(BUFFER_LEN);
@@ -366,7 +368,8 @@ function Microphone() {
     }
 
 // -----------------------------------------------------------------------------
-// getPeakPeriodicityIndex function.
+// getPeakPeriodicityIndex function. After finding the second zero crossing
+// in the passed sums array, finds the max peak that occcurs after that crossing
 
     function getPeakPeriodicityIndex(sums) {  
         // Find second zero crossing, start searching at that point
@@ -384,7 +387,8 @@ function Microphone() {
     }
     
 // -----------------------------------------------------------------------------
-// computeFreqFromAutocorr function.
+// computeFreqFromAutocorr function. Gets the max peak index, and then 
+// calculates the frequency by dividing the sample rate by that index.
 
     function computeFreqFromAutocorr() {
         var sums = autocorrelate(timeData);
@@ -393,7 +397,9 @@ function Microphone() {
     }
     
 // -----------------------------------------------------------------------------
-// getNoteFromAutocorr function.
+// getNoteFromAutocorr function. Computes the current frequency with 
+// computeFreqFromAutoCorr, then determines the current note by feeding the 
+// current frequency to matchNote.
 
     function getNoteFromAutocorr() {
         var currFreq = computeFreqFromAutocorr();
@@ -402,7 +408,10 @@ function Microphone() {
     }
 
 // -----------------------------------------------------------------------------
-// getNoteCentsFromAutocorr function.
+// getNoteCentsFromAutocorr function. Computes the current frequency with 
+// computeFreqFromAutocorr, then determines the current note by feeding the 
+// current frequency to matchNote, and finally computes the cents offset from 
+// the current note.
 
     function getNoteCentsFromAutocorr() {
         var currFreq = computeFreqFromAutocorr();
@@ -499,7 +508,7 @@ function Microphone() {
 // =============================================================================
 
 // -----------------------------------------------------------------------------
-// writeToWav function.
+// writeToWav function. Writes our recording data to a .WAV file.
 
     function writeToWav() {
         // we flat the left and right channels down
@@ -553,7 +562,8 @@ function Microphone() {
     }
 
 // -----------------------------------------------------------------------------
-// interleave function.
+// interleave function. Takes the left and right channels and combines them
+// into one array, alternating between the two channels to copy the values over.
 
     function interleave(leftChannel, rightChannel) {
         var length = leftChannel.length + rightChannel.length;
@@ -570,7 +580,9 @@ function Microphone() {
     }
 
 // -----------------------------------------------------------------------------
-// mergeBuffers function.
+// mergeBuffers function. Takes each of the individual channel buffers and
+// combines them sequentially into one final result array, which has length
+// equal to the given length of the recording.
 
     function mergeBuffers(channelBuffer, recordingLength) {
         var result = new Float32Array(recordingLength);
@@ -585,7 +597,7 @@ function Microphone() {
     }
 
 // -----------------------------------------------------------------------------
-// writeUTFBytes function.
+// writeUTFBytes function. Helper function for writeToWav.
 
     function writeUTFBytes(view, offset, string) { 
         var lng = string.length;

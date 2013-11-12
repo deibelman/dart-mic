@@ -156,13 +156,17 @@ matchNote
 
 --------------------------Autocorrelation functions-----------------------------
 autocorrelate
-// autocorrelate function.
+// autocorrelate function. For each index in an array of length BUFFER_LEN,
+// adds the data element at that index and the next index together, then stores
+// it in a separate sums array.
 
 getPeakPeriodicityIndex
-// getPeakPeriodicityIndex function.
+// getPeakPeriodicityIndex function. After finding the second zero crossing
+// in the passed sums array, finds the max peak that occcurs after that crossing
 
 computeFreqFromAutocorr
-// computeFreqFromAutocorr function.
+// computeFreqFromAutocorr function. Gets the max peak index, and then 
+// calculates the frequency by dividing the sample rate by that index.
 
 getNoteFromAutocorr
 // getNoteFromAutocorr function. Computes the current frequency with 
@@ -205,22 +209,27 @@ getNoteCentsFromFFT
 
 ------------------------------Recording functions-------------------------------
 writeToWav
-// writeToWav function.
+// writeToWav function. Writes our recording data to a .WAV file.
 
 interleave
-// interleave function.
+// interleave function. Takes the left and right channels and combines them
+// into one array, alternating between the two channels to copy the values over.
 
 mergeBuffers
-// mergeBuffers function.
+// mergeBuffers function. Takes each of the individual channel buffers and
+// combines them sequentially into one final result array, which has length
+// equal to the given length of the recording.
 
 writeUTFBytes
-// writeUTFBytes function.
+// writeUTFBytes function. Helper function for writeToWav.
 
 --------------------------Test and debugging functions--------------------------
 this.logData
 // logData function. Logs time domain data, then frequency domain data for
 // external analysis. Used as a debugging / quantitative analysis tool. If 
 // needed, tie it to a button so problems can be logged in real time.
+//
+// Example: mic.logData() //will log time and frequency domain data in txt file
 
 
 // =============================================================================
