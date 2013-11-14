@@ -21,9 +21,9 @@ the FFT and autocorrelate results for each note detection side by side.
 	 "TEST" button on it.
 	 
 4. Click the "TEST" button. This will automatically run both FFT and 
-	 autocorrelate tests on the sound file you chose to test.
-	 
-5. DOES THIS DOWNLOAD AUTOMATICALLY? ASK PATRICK
+	 autocorrelate tests on the sound file you chose to test. The generated 
+	 'notes.txt' file will be automatically downloaded once the tests are 
+	 complete.
 	 
 // =============================================================================
 // About the sample output
@@ -36,9 +36,11 @@ The sample output folder included in the test harness contains the following:
 2. cdefgfedcgegc.mp3: the default sound file for the test harness
 
 3. freqs.txt: a text file containing the frequencies calculated via FFT and
-	 autocorrelate for the default sound file (see #2)
+	 autocorrelate for the default sound file (see #2). 
 	 
-4. method_compare.m: ASK PATRICK
+4. method_compare.m: This MATLAB script was used to generate the graphs in
+	 autocorr_vs_fft.png. It takes the values from freqs.txt and plots them on
+	 graphs as in autocorr_vs_fft.png.
 
 5. notes.txt: a text file containing the notes calculated via FFT and 
 	 autocorrelate for the default sound file (see #2)
