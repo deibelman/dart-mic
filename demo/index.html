@@ -8,7 +8,6 @@
 </head>
 <body>
     <script src="microphone.js"></script>
-    <script src="mic_driver.js"></script>
     <div style="text-align:center">
 		<a href="#" onclick="mic.startListening();">
 		    <img id="playImg" src="images/video-play.png" height="40px" 
@@ -18,7 +17,7 @@
 		    <img id="stopImg" src="images/stop.png" height="40px" width="40px">
 	    </a>
 	    <br>
-	    <button onclick="mic.logData()">Log Data</button>
+	    <button onclick="mic.isInitialized()">Is mic init?</button>
     </div>
 </body>
 </html>

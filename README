@@ -28,6 +28,7 @@ currently) and DSP.js.
 Microphone Setup:
 	-Callable functions:
 		-this.initialize
+		-this.isInitialized
 		-this.startListening
 		-this.stopListening
 		-this.startRecording
@@ -83,6 +84,11 @@ this.initialize
 // change any part of this initialize function without a compelling reason.
 //
 // Example: mic.initialize()
+
+this.isInitialized
+// isInitialized function. This function simply returns whether or not the 
+// microphone object has been fully initialized (indicated by the var 
+// 'initialized' being equal to true. Returns a boolean value.
 
 this.startListening
 // startListening function. Connects the microphone input to a processing node

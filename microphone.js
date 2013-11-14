@@ -181,6 +181,20 @@ function Microphone() {
     function noStream(e) {
         alert('Error capturing audio.');
     }
+    
+// -----------------------------------------------------------------------------
+// isInitialized function. This function simply returns whether or not the 
+// microphone object has been fully initialized (indicated by the var 
+// 'initialized' being equal to true. Returns a boolean value.
+
+		this.isInitialized = function() {
+				if (initialized) {
+						return true;
+				}
+				else {
+						return false;
+				}
+		}
 
 // -----------------------------------------------------------------------------
 // startListening function. Connects the microphone input to a processing node
