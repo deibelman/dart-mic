@@ -3,7 +3,7 @@ mic.initialize();
 
 setInterval(function() {
 	document.getElementById('note').innerHTML = mic.getNote(1);		
-}, 500);
+}, 100);
 
 /*setInterval(function() {  
     console.log(mic.getFreq(1) + ", " + mic.getNote(1));
