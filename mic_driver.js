@@ -2,7 +2,8 @@ var mic = new Microphone();
 mic.initialize();
 
 setInterval(function() {
-	document.getElementById('note').innerHTML = mic.getNote(1);		
+	document.getElementById('autoNote').innerHTML = mic.getNote(1);	
+	document.getElementById('fftNote').innerHTML = mic.getNote(2);	
 }, 100);
 
 /*setInterval(function() {  
