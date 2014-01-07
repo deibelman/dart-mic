@@ -3,50 +3,50 @@
 <head>
 <style>
 #navigation {
-   float:left;
-   width:100%;
-   background:#fff;
-   border-bottom:4px solid #000;
-   overflow:hidden;
-   position:relative;
+	float:left;
+	width:100%;
+	background:#fff;
+	border-bottom:4px solid #000;
+	overflow:hidden;
+	position:relative;
 }
 #navigation ul {
-   clear:left;
-   float:left;
-   list-style:none;
-   margin:0;
-   padding:0;
-   position:relative;
-   left:50%;
-   text-align:center;
+	clear:left;
+	float:left;
+	list-style:none;
+	margin:0;
+	padding:0;
+	position:relative;
+	left:50%;
+	text-align:center;
 }
 #navigation ul li {
-   display:block;
-   float:left;
-   list-style:none;
-   margin:0;
-   padding:0;
-   position:relative;
-   right:50%;
+	display:block;
+	float:left;
+	list-style:none;
+	margin:0;
+	padding:0;
+	position:relative;
+	right:50%;
 }
 #navigation ul li a {
-   display:block;
-   margin:0 0 0 1px;
-   padding:3px 10px;
-   background:#ddd;
-   color:#000;
-   text-decoration:none;
-   line-height:1.3em;
+	display:block;
+	margin:0 0 0 1px;
+	padding:3px 10px;
+	background:#ddd;
+	color:#000;
+	text-decoration:none;
+	line-height:1.3em;
 }
 #navigation ul li a:hover {
-   background:#369;
-   color:#fff;
+	background:#369;
+	color:#fff;
 }
 #navigation ul li a.active,
 #navigation ul li a.active:hover {
-   color:#fff;
-   background:#000;
-   font-weight:bold;
+	color:#fff;
+	background:#000;
+	font-weight:bold;
 }
 </style>
 </head>
@@ -55,39 +55,37 @@
 <!-- Site navigation menu -->
 <div id="navigation">
 <ul>
-  <li><a href="index.html">About</a></li>
-  <li><a href="docs.html">Documentation</a></li>
-  <li><a href="demo.html">Demo</a></li>
-  <li><a href="download.html">Download</a></li>
+<li><a href="index.html">About</a></li>
+<li><a href="docs.html">Documentation</a></li>
+<li><a href="demo.html">Demo</a></li>
+<li><a href="download.html">Download</a></li>
 </ul>
 </div>
 
-    <script src="microphone.js"></script>
-    <script src="mic_driver.js"></script>
-    <div style="text-align:center">
-    <p></p>
-    <p> Press the play button to begin listening. Observe the results of both 
-    		the autocorrelation and FFT pitch detection methods in real time.
-    		Press the stop button to stop listening. </p>
-		<a href="#" onclick="mic.startListening();">
-		    <img id="playImg" src="images/video-play.png" height="40px" 
-		    width="40px">
-	    </a>
-		<a href="#" onclick="mic.stopListening();">
-		    <img id="stopImg" src="images/stop.png" height="40px" width="40px">
-	    </a>
-	    <br>
-	    <p style="font-size:20px"> 
-	    	Detected note (autocorrelation): 
-	    		<b style="font-size:30px" id='autoNote'></b> 
-	    	Cents: <b id='autoCents'></b>
-	    </p>
-	    <br>
-	    <p style="font-size:20px">
-	    	Detected note (FFT): <b style="font-size:30px" id='fftNote'></b>
-	    	Cents: <b id='fftCents'></b>
-	    </p>
-    </div>
+<script src="microphone.js"></script>
+<script src="mic_driver.js"></script>
+<div style="text-align:center">
+<p> Press the play button to begin listening. Observe the results of both 
+the autocorrelation and FFT pitch detection methods in real time.
+Press the stop button to stop listening. </p>
+<a href="#" onclick="mic.startListening();">
+<img id="playImg" src="images/video-play.png" height="40px" width="40px">
+</a>
+<a href="#" onclick="mic.stopListening();">
+<img id="stopImg" src="images/stop.png" height="40px" width="40px">
+</a>
+<br>
+<p style="font-size:20px"> 
+Detected note (autocorrelation): 
+<b style="font-size:30px" id='autoNote'></b> 
+Cents: <b id='autoCents'></b>
+</p>
+<br>
+<p style="font-size:20px">
+Detected note (FFT): <b style="font-size:30px" id='fftNote'></b>
+Cents: <b id='fftCents'></b>
+</p>
+</div>
 
 </body>
 </html>
