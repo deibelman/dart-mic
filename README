@@ -14,6 +14,9 @@ pitch/note detection, volume detection, recording, and general purpose data
 processing. It makes use of the Web Audio APi (which is only supported by Chrome
 currently) and DSP.js.
 
+To view a website with a simple demo of our project, please visit here:
+http://deibelman.github.io/dart-mic/
+
 // =============================================================================
 // General usage
 // =============================================================================
