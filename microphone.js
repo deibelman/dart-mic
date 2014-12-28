@@ -55,7 +55,7 @@ function Microphone() {
     var initialized;
     var context;
     var inputHardware; // aka, whatever the user has for a microphone
-    var SAMPLE_RATE;  
+    var SAMPLE_RATE;
     var timeData;
     var procNode;
     var BUFFER_LEN;
@@ -63,7 +63,7 @@ function Microphone() {
     var MAX_PEAK_SEARCH;
     var fft;
     var spectrum;
-    var MY_FFT_SIZE; 
+    var MY_FFT_SIZE;
     var FFT_FREQ_RES;
     var processing;
     var recording;
@@ -78,21 +78,21 @@ function Microphone() {
 // to request browser-level access to a user's microphone. In general, do not
 // change any part of this initialize function without a compelling reason.
     
-    this.initialize = function() {     
+    this.initialize = function() {
         // Set parameters
         initialized = false;
         context = null;
         inputHardware = null;       // Microphone
         SAMPLE_RATE = 44100;
         timeData = null;
-        procNode = null;           
+        procNode = null;
         BUFFER_LEN = 1024;          // Keep a power of 2, but can change to
                                     // provide more data, increased resolution
-        MIN_SUPPORTED_FREQ = 60;    
+        MIN_SUPPORTED_FREQ = 60;
         MAX_PEAK_SEARCH = (SAMPLE_RATE/MIN_SUPPORTED_FREQ);
         fft = null;
         spectrum = null;
-        MY_FFT_SIZE = BUFFER_LEN; 
+        MY_FFT_SIZE = BUFFER_LEN;
         FFT_FREQ_RES = (SAMPLE_RATE/2)/(MY_FFT_SIZE/2);
         processing = false;
         recording = false;
@@ -100,24 +100,24 @@ function Microphone() {
         leftChannel = [];
         rightChannel = [];
         notes = {"A#1" : 58.2705, "B1" : 61.7354, "C2" : 65.4064, 
-        	"C#2" : 69.2957, "D2" : 73.4162, "D#2" : 77.7817, "E2" : 82.4069, 
-        	"F2" : 87.3071, "F#2" : 92.4986, "G2" : 97.9989, "G#2" : 103.826, 
-        	"A2" : 110, "A#2" : 116.542, "B2" : 123.471, "C3" : 130.813, 
-        	"C#3" : 138.591, "D3" : 146.832, "D#3" : 155.563, "E3" : 164.814, 
-        	"F3" : 174.614, "F#3" : 184.997, "G3" : 195.998, "G#3" : 207.652, 
-        	"A3" : 220, "A#3" : 233.082, "B3" : 246.942, "C4" : 261.626, 
-        	"C#4" : 277.183, "D4" : 293.665, "D#4" : 311.127, "E4" : 329.628, 
-        	"F4" : 349.228, "F#4" : 369.994, "G4" : 391.995, "G#4" : 415.305, 
-        	"A4" : 440, "A#4" : 466.164, "B4" : 493.883, "C5" : 523.251, 
-        	"C#5" : 554.365, "D5" : 587.330, "D#5" : 622.254, "E5" : 659.255, 
-        	"F5" : 698.456, "F#5" : 739.989, "G5" : 783.991, "G#5" : 830.609, 
-        	"A5" : 880, "A#5" : 932.328, "B5" : 987.767, "C6" : 1046.5, 
-        	"C#6" : 1108.73, "D6" : 1174.66, "D#6" : 1244.51, "E6" : 1318.51, 
-        	"F6" : 1396.91, "F#6" : 1479.98, "G6" : 1567.98, "G#6" : 1661.22, 
-        	"A6" : 1760, "A#6" : 1864.66, "B6" : 1975.53, "C7" : 2093, 
-        	"C#7" : 2217.46, "D7" : 2349.32, "D#7" : 2489.02, "E7" : 2637.02, 
-        	"F7" : 2793.83, "F#7" : 2959.96, "G7" : 3135.96, "G#7" : 3322.44, 
-        	"A7" : 3520, "A#7" : 3729.31, "B7" : 3951.07, "C8" : 4186.01};
+            "C#2" : 69.2957, "D2" : 73.4162, "D#2" : 77.7817, "E2" : 82.4069, 
+            "F2" : 87.3071, "F#2" : 92.4986, "G2" : 97.9989, "G#2" : 103.826, 
+            "A2" : 110, "A#2" : 116.542, "B2" : 123.471, "C3" : 130.813, 
+            "C#3" : 138.591, "D3" : 146.832, "D#3" : 155.563, "E3" : 164.814, 
+            "F3" : 174.614, "F#3" : 184.997, "G3" : 195.998, "G#3" : 207.652, 
+            "A3" : 220, "A#3" : 233.082, "B3" : 246.942, "C4" : 261.626, 
+            "C#4" : 277.183, "D4" : 293.665, "D#4" : 311.127, "E4" : 329.628, 
+            "F4" : 349.228, "F#4" : 369.994, "G4" : 391.995, "G#4" : 415.305, 
+            "A4" : 440, "A#4" : 466.164, "B4" : 493.883, "C5" : 523.251, 
+            "C#5" : 554.365, "D5" : 587.330, "D#5" : 622.254, "E5" : 659.255, 
+            "F5" : 698.456, "F#5" : 739.989, "G5" : 783.991, "G#5" : 830.609, 
+            "A5" : 880, "A#5" : 932.328, "B5" : 987.767, "C6" : 1046.5, 
+            "C#6" : 1108.73, "D6" : 1174.66, "D#6" : 1244.51, "E6" : 1318.51, 
+            "F6" : 1396.91, "F#6" : 1479.98, "G6" : 1567.98, "G#6" : 1661.22, 
+            "A6" : 1760, "A#6" : 1864.66, "B6" : 1975.53, "C7" : 2093, 
+            "C#7" : 2217.46, "D7" : 2349.32, "D#7" : 2489.02, "E7" : 2637.02, 
+            "F7" : 2793.83, "F#7" : 2959.96, "G7" : 3135.96, "G#7" : 3322.44, 
+            "A7" : 3520, "A#7" : 3729.31, "B7" : 3951.07, "C8" : 4186.01};
 
         // Make a note that the microphone is about to be accessed
         console.log('Beginning!');
@@ -125,18 +125,18 @@ function Microphone() {
         // Normalize the various vendor prefixed versions of getUserMedia
         navigator.getUserMedia = (navigator.getUserMedia ||
                                   navigator.webkitGetUserMedia ||
-                                  navigator.mozGetUserMedia || 
+                                  navigator.mozGetUserMedia ||
                                   navigator.msGetUserMedia);
 
         // Check that browser supports getUserMedia
         if (navigator.getUserMedia) {
             // Request the microphone
             navigator.getUserMedia({audio:true}, gotStream, noStream);
-        } 
+        }
         else {
             alert('Sorry, your browser does not support getUserMedia');
         }
-    }
+    };
 
 // -----------------------------------------------------------------------------
 // gotStream function. This function is the success callback for getUserMedia
@@ -155,7 +155,7 @@ function Microphone() {
 
         // Set up a processing node that will allow us to pass mic input off to
         // the DSP library for frequency domain analysis
-        procNode = context.createJavaScriptNode(BUFFER_LEN, 1, 1);
+        procNode = context.createScriptProcessor(BUFFER_LEN, 1, 1);
         procNode.onaudioprocess = function(e) {
             timeData = e.inputBuffer.getChannelData(0);
             if (recording) {
@@ -163,14 +163,14 @@ function Microphone() {
                 rightChannel.push(new Float32Array(timeData));
                 recordingLength += BUFFER_LEN;
             }
-        }
+        };
         
         // Create an audio source node from the microphone input to eventually 
         // feed into the processing node
         inputHardware = context.createMediaStreamSource(stream);
         procNode.connect(context.destination); // Node must have a destination
                                                // to work. Weird. 
-        console.log('gotStream finished')                                      
+        console.log('gotStream finished');
         initialized = true;
     }
 
@@ -187,14 +187,14 @@ function Microphone() {
 // microphone object has been fully initialized (indicated by the var 
 // 'initialized' being equal to true. Returns a boolean value.
 
-		this.isInitialized = function() {
-				if (initialized) {
-						return true;
-				}
-				else {
-						return false;
-				}
-		}
+    this.isInitialized = function() {
+        if (initialized) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
 
 // -----------------------------------------------------------------------------
 // startListening function. Connects the microphone input to a processing node
@@ -209,12 +209,12 @@ function Microphone() {
         else {
             console.log('Now listening');
             if (!processing) {
-            		processing = true;
-            		// connect mic input so we can process it whenever we want
-            		inputHardware.connect(procNode);
-            }   
+                    processing = true;
+                    // connect mic input so we can process it whenever we want
+                    inputHardware.connect(procNode);
+            }
         }
-    }
+    };
 
 // -----------------------------------------------------------------------------
 // stopListening function. Disconnects the microphone input. Can be called or
@@ -228,7 +228,7 @@ function Microphone() {
             // Stop processing audio stream
             inputHardware.disconnect();
         }
-    }
+    };
     
 // -----------------------------------------------------------------------------
 // startRecording function. Begins gathering microphone input and storing it in
@@ -236,7 +236,7 @@ function Microphone() {
 
     this.startRecording = function() {
         if (!initialized || !processing) {
-            throw "Microphone not initialized / not processing"
+            throw "Microphone not initialized / not processing";
         }
         else {
             console.log('Now recording');
@@ -244,7 +244,7 @@ function Microphone() {
                 recording = true;
             }
         }
-    }
+    };
 
 // -----------------------------------------------------------------------------
 // stopRecording function. Stops packaging incoming microphone data into WAV
@@ -256,7 +256,7 @@ function Microphone() {
             recording = false;
             writeToWav();
         }
-    }
+    };
 
 // =============================================================================
 // General Purpose Functions
@@ -272,11 +272,10 @@ function Microphone() {
         var closest = "A#1"; // Default closest note
         var closestFreq = 58.2705;
         for (var key in notes) { // Iterates through note look-up table
-        		// If the current note in the table is closer to the given
-        		// frequency than the current "closest" note, replace the 
-        		// "closest" note.
-            if (Math.abs(notes[key] - freq) <= Math.abs(notes[closest] - 
-                    freq)) {
+                // If the current note in the table is closer to the given
+                // frequency than the current "closest" note, replace the 
+                // "closest" note.
+            if (Math.abs(notes[key] - freq) <= Math.abs(notes[closest] - freq)) {
                 closest = key;
                 closestFreq = notes[key];
             }
@@ -288,7 +287,7 @@ function Microphone() {
         }
 
         return [closest, closestFreq];
-    }   
+    }
 
 // -----------------------------------------------------------------------------
 // getMaxInputAmplitude function. Input: none. Output: the amplitude of the
@@ -307,7 +306,7 @@ function Microphone() {
         }
         
         return Math.round(20.0*Math.log(Math.max(m, minMag)));
-    }
+    };
 
 // -----------------------------------------------------------------------------
 // getFreq function. Input: the method number (default is 1 to use
@@ -324,7 +323,7 @@ function Microphone() {
         else if (method == 2) {
             return computeFreqFromFFT();
         }
-    }
+    };
     
 // -----------------------------------------------------------------------------
 // getNote function. Input: the method number (default is 1 to use
@@ -341,7 +340,7 @@ function Microphone() {
         else if (method == 2) {
             return getNoteFromFFT();
         }
-    }
+    };
     
 // -----------------------------------------------------------------------------
 // getNoteCents function. Input: the method number (default is 1 to use
@@ -358,7 +357,7 @@ function Microphone() {
         else if (method == 2) {
             return getNoteCentsFromFFT();
         }
-    }
+    };
 
 // =============================================================================
 // Autocorrelation Functions
@@ -385,7 +384,7 @@ function Microphone() {
 // getPeakPeriodicityIndex function. After finding the second zero crossing
 // in the passed sums array, finds the max peak that occcurs after that crossing
 
-    function getPeakPeriodicityIndex(sums) {  
+    function getPeakPeriodicityIndex(sums) {
         // Find second zero crossing, start searching at that point
         for (i = 0; sums[i] >= 0 && i < BUFFER_LEN; i++) {}
         for (i = i; sums[i] < 0 && i < BUFFER_LEN; i++) {}
@@ -476,9 +475,9 @@ function Microphone() {
 
     function jainsMethodInterpolate(spctrm, maxIndex) {
         var m1, m2, m3, n, o;
-        var m1 = Math.abs(spctrm[maxIndex - 1]);
-        var m2 = Math.abs(spctrm[maxIndex]);
-        var m3 = Math.abs(spctrm[maxIndex + 1]);
+        m1 = Math.abs(spctrm[maxIndex - 1]);
+        m2 = Math.abs(spctrm[maxIndex]);
+        m3 = Math.abs(spctrm[maxIndex + 1]);
         
         if (m1 > m3) {
             a = m2 / m1;
@@ -510,7 +509,7 @@ function Microphone() {
 // current note
 
     function getNoteCentsFromFFT() {
-        var currFreq = computeFreqFromFFT()
+        var currFreq = computeFreqFromFFT();
         var noteInfo = matchNote(currFreq);
         var noteFreq = noteInfo[1];
         var cents = 1200*(Math.log(currFreq/Math.round(noteFreq))/Math.log(2));
@@ -613,7 +612,7 @@ function Microphone() {
 // -----------------------------------------------------------------------------
 // writeUTFBytes function. Helper function for writeToWav.
 
-    function writeUTFBytes(view, offset, string) { 
+    function writeUTFBytes(view, offset, string) {
         var lng = string.length;
         for (var i = 0; i < lng; i++){
             view.setUint8(offset + i, string.charCodeAt(i));
@@ -646,33 +645,33 @@ function Microphone() {
             textToWrite += f[i] + "\n";
         }
         
-	    var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
-	    var fileNameToSaveAs = "jslog.txt";
+        var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+        var fileNameToSaveAs = "jslog.txt";
 
-	    var downloadLink = document.createElement("a");
-	    downloadLink.download = fileNameToSaveAs;
-	    downloadLink.innerHTML = "Download File";
-	    if (window.webkitURL != null) {
-		    // Chrome allows the link to be clicked
-		    // without actually adding it to the DOM.
-		    downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
-	    }
-	    else {
-		    // Firefox requires the link to be added to the DOM
-		    // before it can be clicked.
-		    downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
-		    downloadLink.onclick = destroyClickedElement;
-		    downloadLink.style.display = "none";
-		    document.body.appendChild(downloadLink);
-	    }
+        var downloadLink = document.createElement("a");
+        downloadLink.download = fileNameToSaveAs;
+        downloadLink.innerHTML = "Download File";
+        if (window.webkitURL !== null) {
+            // Chrome allows the link to be clicked
+            // without actually adding it to the DOM.
+            downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+        }
+        else {
+            // Firefox requires the link to be added to the DOM
+            // before it can be clicked.
+            downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+            downloadLink.onclick = destroyClickedElement;
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+        }
 
-	    downloadLink.click();
-    }
+        downloadLink.click();
+    };
 
     // Helper for Firefox
 
     function destroyClickedElement(event) {
-	    document.body.removeChild(event.target);
+        document.body.removeChild(event.target);
     }
 }
 
